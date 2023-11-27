@@ -1,0 +1,26 @@
+body{
+    display: block;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    position: relative;
+}
+
+.video-container{
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    outline: none;
+}
+
+#music-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    margin: 0px;
+    padding: 0;
+    outline: none;
+    border: 0;
+}
