@@ -4,6 +4,30 @@ body{
     padding: 0;
     overflow: hidden;
     position: relative;
+    background-color: #191414;
+}
+
+#login{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.login-btn{
+    color: #191414;
+    background-color: #1DB954;
+    border-radius: 80px;
+    text-decoration: none;
+    cursor: pointer;
+    padding: 1.1rem;
+    font-family: sans-serif;
+    font-size: 2rem;
+    transition: all 0.4s ease;
+}
+
+.login-btn:hover{
+    background-color: #167237;
 }
 
 .video-container{

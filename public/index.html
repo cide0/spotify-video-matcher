@@ -11,8 +11,7 @@
 <body>
 <div class="container">
     <div id="login">
-        <h1>This is an example of the Authorization Code flow</h1>
-        <a href="/login">Log in with Spotify</a>
+        <a href="/login" class="login-btn">Log in with Spotify</a>
     </div>
     <div id="loggedin" class="video-container">
         <p id="song_search_string" hidden></p>
@@ -22,7 +21,14 @@
 <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
 <script>
     (function() {
-
+        google_api_keys = [
+            'AIzaSyAqFDCw0aurq3G33lsyMU1Rsmx0jUBo9WI',
+            'AIzaSyCYVvBN8U_Mh8kEHdIj8YgKPs1qyJZgSNQ',
+            'AIzaSyAQMjIEzOswbjYCZ2NvzpGePboQCMsnfno',
+            'AIzaSyCzW4obvmVSGFJlDOFgeEmHOT8fJZgJQ1Q',
+            'AIzaSyAL2Uxkv5kHMrcl-uPNicgEUUT2z3nLYpM',
+            'AIzaSyBIB6-WO1ZW4jn-aOXmAJPliFUW-_yypFQ'
+        ];
         /**
          * Obtains parameters from the hash of the URL
          * @return Object
@@ -46,7 +52,6 @@
         let video_playing = true;
 
         function loadVideo(refresh_token){
-
             const song_search_string_element = document.getElementById('song_search_string');
             const music_video_element = document.getElementById('music-video');
 
@@ -84,7 +89,7 @@
                     }
 
                     if(song_playing && !video_playing){
-                        let video_start = Math.trunc((song_progress+1700)/1000);
+                        let video_start = Math.trunc((song_progress+1600)/1000);
                         let new_video_src = music_video_element.src;
                         if(new_video_src.includes('&start=')){
                             let start_param_index = new_video_src.indexOf('&start=');
@@ -97,26 +102,31 @@
                     if(current_song !== song_search_string){
                         song_search_string_element.innerHTML = song_search_string;
                         $.ajax({
-                            url: 'https://www.googleapis.com/youtube/v3/search?key=AIzaSyAqFDCw0aurq3G33lsyMU1Rsmx0jUBo9WI&type=video&q=' + song_search_string + '&part=snippet',
+                            url: 'https://www.googleapis.com/youtube/v3/search?key=' + google_api_keys[0] +'&type=video&q=' + song_search_string + '&part=snippet',
                             success: function(response) {
                                 let video_id = response.items[0].id.videoId;
-                                music_video_element.src = "https://www.youtube.com/embed/" + video_id + "?autoplay=1&mute=1&vq=hd1080&enablejsapi=1&version=3&playerapiid=ytplayer&start=" + Math.trunc((song_progress+1700)/1000);
+                                music_video_element.src = "https://www.youtube.com/embed/" + video_id + "?autoplay=1&mute=1&vq=hd1080&enablejsapi=1&version=3&playerapiid=ytplayer&start=" + Math.trunc((song_progress+1600)/1000);
                             },
                             error: function(response){
                                 let message = response.responseJSON.error.message;
                                 if(message.includes('The request cannot be completed because you have exceeded your')){
-                                    $.ajax({
-                                        url: 'https://www.googleapis.com/youtube/v3/search?key=AIzaSyAgXdAm0hoy431DOsVNau_rIXmCOTmfzGM&type=video&q=' + song_search_string + '&part=snippet',
-                                        success: function (response) {
-                                            let video_id = response.items[0].id.videoId;
-                                            music_video_element.src = "https://www.youtube.com/embed/" + video_id + "?autoplay=1&mute=1&vq=hd1080&enablejsapi=1&version=3&playerapiid=ytplayer&start=" + Math.trunc((song_progress + 1700) / 1000);
-                                        }
-                                    });
+                                    google_api_keys.shift();
+                                    if(google_api_keys.length === 0){
+                                        alert('All google api keys have been used up for today :(');
+                                    } else {
+                                        $.ajax({
+                                            url: 'https://www.googleapis.com/youtube/v3/search?key=' + google_api_keys[0] + '&type=video&q=' + song_search_string + '&part=snippet',
+                                            success: function (response) {
+                                                let video_id = response.items[0].id.videoId;
+                                                music_video_element.src = "https://www.youtube.com/embed/" + video_id + "?autoplay=1&mute=1&vq=hd1080&enablejsapi=1&version=3&playerapiid=ytplayer&start=" + Math.trunc((song_progress + 1600) / 1000);
+                                            }
+                                        });
+                                    }
                                 }
                             }
                         });
                     } else {
-                        let song_remaining_length = song_length - song_progress - 33000;
+                        let song_remaining_length = song_length - song_progress - 32000;
                         setTimeout(function(){
                             loadVideo(refresh_token);
                         }, song_remaining_length);
