@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Spotify video matcher</title>
+    <link rel="icon" type="image/x-icon" href="favicon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="styles.css" rel="stylesheet">
+</head>
+
+<body>
+<div class="container">
+    <div id="login">
+        <h1>This is an example of the Authorization Code flow</h1>
+        <a href="/login">Log in with Spotify</a>
+    </div>
+    <div id="loggedin" class="video-container">
+        <p id="song_search_string" hidden></p>
+        <iframe id="music-video" class="music-video" src="https://www.youtube.com/embed/QbgaRbyWTW8" allowscriptaccess="always" allowfullscreen></iframe>
+    </div>
+</div>
+<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+<script>
+    (function() {
+
+        /**
+         * Obtains parameters from the hash of the URL
+         * @return Object
+         */
+        function getHashParams() {
+            var hashParams = {};
+            var e, r = /([^&;=]+)=?([^&;]*)/g,
+                q = window.location.hash.substring(1);
+            while ( e = r.exec(q)) {
+                hashParams[e[1]] = decodeURIComponent(e[2]);
+            }
+            return hashParams;
+        }
+
+        var params = getHashParams();
+
+        var access_token = params.access_token,
+            refresh_token = params.refresh_token,
+            error = params.error;
+
+        let video_playing = true;
+
+        function loadVideo(refresh_token){
+
+            const song_search_string_element = document.getElementById('song_search_string');
+            const music_video_element = document.getElementById('music-video');
+
+            $.ajax({
+                url: '/refresh_token',
+                data: {
+                    'refresh_token': refresh_token
+                }
+            }).done(function(data) {
+                access_token = data.access_token;
+            });
+
+            $.ajax({
+                url: 'https://api.spotify.com/v1/me/player/currently-playing',
+                headers: {
+                    'Authorization': 'Bearer ' + access_token
+                },
+                success: function(response) {
+
+                    let song_name = response.item.name;
+                    let artist = response.item.artists[0].name;
+                    let song_length = +response.item.duration_ms;
+                    let song_progress = +response.progress_ms;
+                    let song_playing = response.is_playing;
+
+                    let song_search_string = song_name + ' by ' + artist + ' music video'
+
+                    let current_song = song_search_string_element.innerHTML
+
+                    if(!song_playing && video_playing){
+                        $('.music-video').each(function(){
+                            this.contentWindow.postMessage('{"event":"command","func":"stopVideo","args":""}', '*')
+                        });
+                        video_playing = false;
+                    }
+
+                    if(song_playing && !video_playing){
+                        let video_start = Math.trunc((song_progress+1800)/1000);
+                        let new_video_src = music_video_element.src;
+                        if(new_video_src.includes('&start=')){
+                            let start_param_index = new_video_src.indexOf('&start=');
+                            new_video_src = new_video_src.slice(0, start_param_index);
+                        }
+                        music_video_element.src = new_video_src + "&start=" + video_start;
+                        video_playing = true;
+                    }
+
+                    if(current_song !== song_search_string){
+                        song_search_string_element.innerHTML = song_search_string;
+                        $.ajax({
+                            url: 'https://www.googleapis.com/youtube/v3/search?key=AIzaSyAqFDCw0aurq3G33lsyMU1Rsmx0jUBo9WI&type=video&q=' + song_search_string + '&part=snippet',
+                            success: function(response) {
+                                let video_id = response.items[0].id.videoId;
+                                music_video_element.src = "https://www.youtube.com/embed/" + video_id + "?autoplay=1&mute=1&vq=hd1080&enablejsapi=1&version=3&playerapiid=ytplayer&start=" + Math.trunc((song_progress+1800)/1000);
+                            },
+                            error: function(response){
+                                let message = response.responseJSON.error.message;
+                                if(message.includes('The request cannot be completed because you have exceeded your')){
+                                    $.ajax({
+                                        url: 'https://www.googleapis.com/youtube/v3/search?key=AIzaSyAgXdAm0hoy431DOsVNau_rIXmCOTmfzGM&type=video&q=' + song_search_string + '&part=snippet',
+                                        success: function (response) {
+                                            let video_id = response.items[0].id.videoId;
+                                            music_video_element.src = "https://www.youtube.com/embed/" + video_id + "?autoplay=1&mute=1&vq=hd1080&enablejsapi=1&version=3&playerapiid=ytplayer&start=" + Math.trunc((song_progress + 1800) / 1000);
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    } else {
+                        let song_remaining_length = song_length - song_progress - 33000;
+                        setTimeout(function(){
+                            loadVideo(refresh_token);
+                        }, song_remaining_length);
+                    }
+
+                    $('#login').hide();
+                    $('#loggedin').show();
+                }
+            });
+        }
+
+        if (error) {
+            alert('There was an error during the authentication');
+        } else {
+            if (access_token) {
+                loadVideo(refresh_token)
+                window.setInterval(function(){
+                    loadVideo(refresh_token)
+                }, 10000);
+            } else {
+                // render initial screen
+                $('#login').show();
+                $('#loggedin').hide();
+            }
+        }
+    })();
+</script>
+</body>
+</html>
