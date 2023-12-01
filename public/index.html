@@ -89,7 +89,7 @@
                     }
 
                     if(song_playing && !video_playing){
-                        let video_start = Math.trunc((song_progress+1600)/1000);
+                        let video_start = Math.trunc((song_progress+1500)/1000);
                         let new_video_src = music_video_element.src;
                         if(new_video_src.includes('&start=')){
                             let start_param_index = new_video_src.indexOf('&start=');
@@ -105,7 +105,7 @@
                             url: 'https://www.googleapis.com/youtube/v3/search?key=' + google_api_keys[0] +'&type=video&q=' + song_search_string + '&part=snippet',
                             success: function(response) {
                                 let video_id = response.items[0].id.videoId;
-                                music_video_element.src = "https://www.youtube.com/embed/" + video_id + "?autoplay=1&mute=1&vq=hd1080&enablejsapi=1&version=3&playerapiid=ytplayer&start=" + Math.trunc((song_progress+1600)/1000);
+                                music_video_element.src = "https://www.youtube.com/embed/" + video_id + "?autoplay=1&mute=1&vq=hd1080&enablejsapi=1&version=3&playerapiid=ytplayer&start=" + Math.trunc((song_progress+1500)/1000);
                             },
                             error: function(response){
                                 let message = response.responseJSON.error.message;
@@ -118,7 +118,7 @@
                                             url: 'https://www.googleapis.com/youtube/v3/search?key=' + google_api_keys[0] + '&type=video&q=' + song_search_string + '&part=snippet',
                                             success: function (response) {
                                                 let video_id = response.items[0].id.videoId;
-                                                music_video_element.src = "https://www.youtube.com/embed/" + video_id + "?autoplay=1&mute=1&vq=hd1080&enablejsapi=1&version=3&playerapiid=ytplayer&start=" + Math.trunc((song_progress + 1600) / 1000);
+                                                music_video_element.src = "https://www.youtube.com/embed/" + video_id + "?autoplay=1&mute=1&vq=hd1080&enablejsapi=1&version=3&playerapiid=ytplayer&start=" + Math.trunc((song_progress + 1500) / 1000);
                                             }
                                         });
                                     }
@@ -126,7 +126,7 @@
                             }
                         });
                     } else {
-                        let song_remaining_length = song_length - song_progress - 32000;
+                        let song_remaining_length = song_length - song_progress - 31000;
                         setTimeout(function(){
                             loadVideo(refresh_token);
                         }, song_remaining_length);
