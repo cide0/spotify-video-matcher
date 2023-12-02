@@ -77,7 +77,7 @@
                     let song_progress = +response.progress_ms;
                     let song_playing = response.is_playing;
 
-                    let song_search_string = song_name + ' by ' + artist + ' music video'
+                    let song_search_string = encodeURIComponent(song_name + ' by ' + artist + ' music video');
 
                     let current_song = song_search_string_element.innerHTML
 
