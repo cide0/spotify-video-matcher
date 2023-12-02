@@ -15,7 +15,7 @@
     </div>
     <div id="loggedin" class="video-container">
         <p id="song_search_string" hidden></p>
-        <iframe id="music-video" class="music-video" src="https://www.youtube.com/embed/QbgaRbyWTW8" allowscriptaccess="always" allowfullscreen></iframe>
+        <iframe id="music-video" class="music-video" src="" allowscriptaccess="always" allowfullscreen></iframe>
     </div>
 </div>
 <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
@@ -78,6 +78,7 @@
                     let song_playing = response.is_playing;
 
                     let song_search_string = song_name + ' by ' + artist + ' music video';
+                    song_search_string = song_search_string.replace('&', 'and');
 
                     let current_song = song_search_string_element.innerHTML
 
@@ -99,8 +100,6 @@
                         video_playing = true;
                     }
 
-                    console.log(current_song);
-                    console.log(song_search_string);
                     if(current_song !== song_search_string){
                         song_search_string_element.innerHTML = song_search_string;
                         $.ajax({
