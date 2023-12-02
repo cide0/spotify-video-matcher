@@ -99,6 +99,8 @@
                         video_playing = true;
                     }
 
+                    console.log(current_song);
+                    console.log(song_search_string);
                     if(current_song !== song_search_string){
                         song_search_string_element.innerHTML = song_search_string;
                         $.ajax({
