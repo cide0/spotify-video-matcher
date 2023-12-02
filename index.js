@@ -7,7 +7,7 @@ const cookieParser = require('cookie-parser');
 
 const client_id = '214db4ea83c34690a9f80d791c703f25';
 const client_secret = '44d327094e59489999883e9f18e6ebdc';
-const redirect_uri = 'http://dev-vm.lan:8080/callback'; //change to localhost for development
+const redirect_uri = 'http://dev-vm:8080/callback'; //change to localhost for development
 
 const generateRandomString = (length) => {
     return crypto
