@@ -51,6 +51,27 @@
 
         let video_playing = true;
 
+        function retryLoadingVideo(response, song_search_string){
+            let message = response.responseJSON.error.message;
+            if(message.includes('The request cannot be completed because you have exceeded your')){
+                google_api_keys.shift();
+                if(google_api_keys.length === 0){
+                    alert('All google api keys have been used up for today :(');
+                } else {
+                    $.ajax({
+                        url: 'https://www.googleapis.com/youtube/v3/search?key=' + google_api_keys[0] + '&type=video&q=' + song_search_string + '&part=snippet',
+                        success: function (response) {
+                            let video_id = response.items[0].id.videoId;
+                            music_video_element.src = "https://www.youtube.com/embed/" + video_id + "?autoplay=1&mute=1&vq=hd1080&enablejsapi=1&version=3&playerapiid=ytplayer&cc_lang_pref=en&cc_load_policy=1&start=" + Math.trunc((song_progress + 1400) / 1000);
+                        },
+                        error: function (response){
+                            retryLoadingVideo(response, song_search_string);
+                        }
+                    });
+                }
+            }
+        }
+
         function loadVideo(refresh_token){
             const song_search_string_element = document.getElementById('song_search_string');
             const music_video_element = document.getElementById('music-video');
@@ -77,8 +98,7 @@
                     let song_progress = +response.progress_ms;
                     let song_playing = response.is_playing;
 
-                    let song_search_string = song_name + ' by ' + artist + ' music video';
-                    song_search_string = song_search_string.replace('&', 'and');
+                    let song_search_string = encodeURIComponent(song_name + ' by ' + artist + ' music video');
 
                     let current_song = song_search_string_element.innerHTML
 
@@ -106,24 +126,10 @@
                             url: 'https://www.googleapis.com/youtube/v3/search?key=' + google_api_keys[0] +'&type=video&q=' + song_search_string + '&part=snippet',
                             success: function(response) {
                                 let video_id = response.items[0].id.videoId;
-                                music_video_element.src = "https://www.youtube.com/embed/" + video_id + "?autoplay=1&mute=1&vq=hd1080&enablejsapi=1&version=3&playerapiid=ytplayer&start=" + Math.trunc((song_progress+1400)/1000);
+                                music_video_element.src = "https://www.youtube.com/embed/" + video_id + "?autoplay=1&mute=1&vq=hd1080&enablejsapi=1&version=3&playerapiid=ytplayer&cc_lang_pref=en&cc_load_policy=1&start=" + Math.trunc((song_progress+1400)/1000);
                             },
                             error: function(response){
-                                let message = response.responseJSON.error.message;
-                                if(message.includes('The request cannot be completed because you have exceeded your')){
-                                    google_api_keys.shift();
-                                    if(google_api_keys.length === 0){
-                                        alert('All google api keys have been used up for today :(');
-                                    } else {
-                                        $.ajax({
-                                            url: 'https://www.googleapis.com/youtube/v3/search?key=' + google_api_keys[0] + '&type=video&q=' + song_search_string + '&part=snippet',
-                                            success: function (response) {
-                                                let video_id = response.items[0].id.videoId;
-                                                music_video_element.src = "https://www.youtube.com/embed/" + video_id + "?autoplay=1&mute=1&vq=hd1080&enablejsapi=1&version=3&playerapiid=ytplayer&start=" + Math.trunc((song_progress + 1400) / 1000);
-                                            }
-                                        });
-                                    }
-                                }
+                                retryLoadingVideo(response, song_search_string);
                             }
                         });
                     } else {
