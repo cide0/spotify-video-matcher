@@ -29,7 +29,7 @@
 
     let video_playing = true;
 
-    function retryLoadingVideo(response, song_search_string, music_video_element){
+    function retryLoadingVideo(response, song_search_string, music_video_element, song_progress){
         let message = response.responseJSON.error.message;
         if(message.includes('The request cannot be completed because you have exceeded your')){
             google_api_keys.shift();
@@ -93,7 +93,7 @@
                                 music_video_element.src = "https://www.youtube.com/embed/" + video_id + "?autoplay=1&mute=1&vq=hd1080&enablejsapi=1&version=3&playerapiid=ytplayer&cc_lang_pref=en&iv_load_policy=3&loop=1&playlist=" + video_id + "&start=" + Math.trunc((song_progress+1400)/1000);
                             },
                             error: function(response){
-                                retryLoadingVideo(response, song_search_string, music_video_element);
+                                retryLoadingVideo(response, song_search_string, music_video_element, song_progress);
                             }
                         });
                     } else {
