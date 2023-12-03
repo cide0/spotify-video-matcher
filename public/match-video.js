@@ -84,24 +84,6 @@
 
                     let current_song = song_search_string_element.innerHTML
 
-                    if(!song_playing && video_playing){
-                        $('.music-video').each(function(){
-                            this.contentWindow.postMessage('{"event":"command","func":"stopVideo","args":""}', '*')
-                        });
-                        video_playing = false;
-                    }
-
-                    if(song_playing && !video_playing){
-                        let video_start = Math.trunc((song_progress+1400)/1000);
-                        let new_video_src = music_video_element.src;
-                        if(new_video_src.includes('&start=')){
-                            let start_param_index = new_video_src.indexOf('&start=');
-                            new_video_src = new_video_src.slice(0, start_param_index);
-                        }
-                        music_video_element.src = new_video_src + "&start=" + video_start;
-                        video_playing = true;
-                    }
-
                     if(current_song !== song_search_string){
                         song_search_string_element.innerHTML = song_search_string;
                         $.ajax({
@@ -119,6 +101,24 @@
                         setTimeout(function(){
                             loadVideo(refresh_token);
                         }, song_remaining_length);
+                    }
+
+                    if(!song_playing && video_playing){
+                        $('.music-video').each(function(){
+                            this.contentWindow.postMessage('{"event":"command","func":"stopVideo","args":""}', '*')
+                        });
+                        video_playing = false;
+                    }
+
+                    if(song_playing && !video_playing){
+                        let video_start = Math.trunc((song_progress+1400)/1000);
+                        let new_video_src = music_video_element.src;
+                        if(new_video_src.includes('&start=')){
+                            let start_param_index = new_video_src.indexOf('&start=');
+                            new_video_src = new_video_src.slice(0, start_param_index);
+                        }
+                        music_video_element.src = new_video_src + "&start=" + video_start;
+                        video_playing = true;
                     }
 
                     $('#login').hide();

@@ -4,7 +4,7 @@ body{
     padding: 0;
     overflow: hidden;
     position: relative;
-    background-color: #191414;
+    background-color: black;
 }
 
 #login{
@@ -15,7 +15,7 @@ body{
 }
 
 .login-btn{
-    color: #191414;
+    color: black;
     background-color: #1DB954;
     border-radius: 80px;
     text-decoration: none;
