@@ -37,10 +37,10 @@
                 alert('All google api keys have been used up for today :(');
             } else {
                 $.ajax({
-                    url: 'https://www.googleapis.com/youtube/v3/search?key=' + google_api_keys[0] + '&type=video&q=' + song_search_string + '&part=snippet',
+                    url: 'https://www.googleapis.com/youtube/v3/search?key=' + google_api_keys[0] + '&type=video&q=' + song_search_string + '&part=snippet&videoEmbeddable=true',
                     success: function (response) {
                         let video_id = response.items[0].id.videoId;
-                        music_video_element.src = "https://www.youtube.com/embed/" + video_id + "?autoplay=1&mute=1&vq=hd1080&enablejsapi=1&version=3&playerapiid=ytplayer&cc_lang_pref=en&cc_load_policy=3&start=" + Math.trunc((song_progress + 1400) / 1000);
+                        music_video_element.src = "https://www.youtube.com/embed/" + video_id + "?autoplay=1&mute=1&vq=hd1080&enablejsapi=1&version=3&playerapiid=ytplayer&cc_lang_pref=en&iv_load_policy=3&loop=1&playlist=" + video_id + "&start=" + Math.trunc((song_progress + 1400) / 1000);
                     },
                     error: function (response){
                         retryLoadingVideo(response, song_search_string);
@@ -87,10 +87,10 @@
                     if(current_song !== song_search_string){
                         song_search_string_element.innerHTML = song_search_string;
                         $.ajax({
-                            url: 'https://www.googleapis.com/youtube/v3/search?key=' + google_api_keys[0] +'&type=video&q=' + song_search_string + '&part=snippet',
+                            url: 'https://www.googleapis.com/youtube/v3/search?key=' + google_api_keys[0] +'&type=video&q=' + song_search_string + '&part=snippet&videoEmbeddable=true',
                             success: function(response) {
                                 let video_id = response.items[0].id.videoId;
-                                music_video_element.src = "https://www.youtube.com/embed/" + video_id + "?autoplay=1&mute=1&vq=hd1080&enablejsapi=1&version=3&playerapiid=ytplayer&cc_lang_pref=en&cc_load_policy=3&start=" + Math.trunc((song_progress+1400)/1000);
+                                music_video_element.src = "https://www.youtube.com/embed/" + video_id + "?autoplay=1&mute=1&vq=hd1080&enablejsapi=1&version=3&playerapiid=ytplayer&cc_lang_pref=en&iv_load_policy=3&loop=1&playlist=" + video_id + "&start=" + Math.trunc((song_progress+1400)/1000);
                             },
                             error: function(response){
                                 retryLoadingVideo(response, song_search_string, music_video_element);
@@ -104,10 +104,12 @@
                     }
 
                     if(!song_playing && video_playing){
-                        $('.music-video').each(function(){
-                            this.contentWindow.postMessage('{"event":"command","func":"stopVideo","args":""}', '*')
-                        });
-                        video_playing = false;
+                        setTimeout(function(){
+                            $('.music-video').each(function(){
+                                this.contentWindow.postMessage('{"event":"command","func":"stopVideo","args":""}', '*')
+                            });
+                            video_playing = false;
+                        }, 750);
                     }
 
                     if(song_playing && !video_playing){
