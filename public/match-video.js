@@ -7,6 +7,8 @@
         'AIzaSyAL2Uxkv5kHMrcl-uPNicgEUUT2z3nLYpM',
         'AIzaSyBIB6-WO1ZW4jn-aOXmAJPliFUW-_yypFQ'
     ];
+
+    let rickrolled = false;
     /**
      * Obtains parameters from the hash of the URL
      * @return Object
@@ -127,21 +129,25 @@
                     let h = date.getHours();
                     let m = date.getMinutes();
 
-                    if((h === 4 && m === 41) || (h === 4 && m === 45)){
-                        if(music_video_element.src !== "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1&vq=hd1080&enablejsapi=1&controls=0&version=3&playerapiid=ytplayer&cc_lang_pref=en&iv_load_policy=3&loop=1&playlist=dQw4w9WgXcQ"){
-                            music_video_element.src = "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1&vq=hd1080&enablejsapi=1&controls=0&version=3&playerapiid=ytplayer&cc_lang_pref=en&iv_load_policy=3&loop=1&playlist=dQw4w9WgXcQ";
-                        }
-                        music_video_element.style.pointerEvents = "none";
-                        song_search_string_element.innerHTML = "Never%20Gonna%20Give%20You%20Up%20by%20Rick%20Astley%20music%20video";
-                        $.ajax({
-                            url: '/rickroll',
-                            data: {
-                                'uri': 'spotify:track:4PTG3Z6ehGkBFwjybzWkR8',
-                                'access_token': access_token
+                    if((h === 4 && m === 47) || (h === 4 && m === 50)){
+                        if(!rickrolled){
+                            if(music_video_element.src !== "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1&vq=hd1080&enablejsapi=1&controls=0&version=3&playerapiid=ytplayer&cc_lang_pref=en&iv_load_policy=3&loop=1&playlist=dQw4w9WgXcQ"){
+                                music_video_element.src = "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1&vq=hd1080&enablejsapi=1&controls=0&version=3&playerapiid=ytplayer&cc_lang_pref=en&iv_load_policy=3&loop=1&playlist=dQw4w9WgXcQ";
                             }
-                        });
+                            music_video_element.style.pointerEvents = "none";
+                            song_search_string_element.innerHTML = "Never%20Gonna%20Give%20You%20Up%20by%20Rick%20Astley%20music%20video";
+                            $.ajax({
+                                url: '/rickroll',
+                                data: {
+                                    'uri': 'spotify:track:4PTG3Z6ehGkBFwjybzWkR8',
+                                    'access_token': access_token
+                                }
+                            });
+                            rickrolled = true;
+                        }
                     } else {
                         music_video_element.style.pointerEvents = "auto";
+                        rickrolled = false;
                     }
 
                     $('#login').hide();
