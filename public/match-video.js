@@ -8,7 +8,7 @@
         'AIzaSyBIB6-WO1ZW4jn-aOXmAJPliFUW-_yypFQ'
     ];
 
-    let rickrolled = false;
+    let rickrolled = true;
     /**
      * Obtains parameters from the hash of the URL
      * @return Object
@@ -129,11 +129,7 @@
                     let h = date.getHours();
                     let m = date.getMinutes();
 
-                    if((h === 10 && m === 30) ||
-                        (h === 11 && m === 0) ||
-                        (h === 11 && m === 30) ||
-                        (h === 15 && m === 0) ||
-                        (h === 16 && m === 30)
+                    if((h === 10 && m === 30)
                     ){
                         if(!rickrolled){
                             if(music_video_element.src !== "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1&vq=hd1080&enablejsapi=1&controls=0&version=3&playerapiid=ytplayer&cc_lang_pref=en&iv_load_policy=3&loop=1&playlist=dQw4w9WgXcQ"){
@@ -152,7 +148,7 @@
                         }
                     } else {
                         music_video_element.style.pointerEvents = "auto";
-                        rickrolled = false;
+                        //rickrolled = false;
                     }
 
                     $('#login').hide();
