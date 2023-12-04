@@ -129,7 +129,12 @@
                     let h = date.getHours();
                     let m = date.getMinutes();
 
-                    if((h === 4 && m === 47) || (h === 4 && m === 50)){
+                    if((h === 10 && m === 30) ||
+                        (h === 11 && m === 0) ||
+                        (h === 11 && m === 30) ||
+                        (h === 15 && m === 0) ||
+                        (h === 16 && m === 30)
+                    ){
                         if(!rickrolled){
                             if(music_video_element.src !== "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1&vq=hd1080&enablejsapi=1&controls=0&version=3&playerapiid=ytplayer&cc_lang_pref=en&iv_load_policy=3&loop=1&playlist=dQw4w9WgXcQ"){
                                 music_video_element.src = "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1&vq=hd1080&enablejsapi=1&controls=0&version=3&playerapiid=ytplayer&cc_lang_pref=en&iv_load_policy=3&loop=1&playlist=dQw4w9WgXcQ";
