@@ -111,7 +111,7 @@
                                 this.contentWindow.postMessage('{"event":"command","func":"stopVideo","args":""}', '*')
                             });
                             video_playing = false;
-                        }, 750);
+                        }, 1000);
                     }
 
                     if(song_playing && !video_playing){
