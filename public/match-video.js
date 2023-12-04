@@ -43,7 +43,7 @@
                         music_video_element.src = "https://www.youtube.com/embed/" + video_id + "?autoplay=1&mute=1&vq=hd1080&enablejsapi=1&version=3&playerapiid=ytplayer&cc_lang_pref=en&iv_load_policy=3&loop=1&playlist=" + video_id + "&start=" + Math.trunc((song_progress + 1400) / 1000);
                     },
                     error: function (response){
-                        retryLoadingVideo(response, song_search_string);
+                        retryLoadingVideo(response, song_search_string, music_video_element, song_progress);
                     }
                 });
             }
@@ -121,6 +121,27 @@
                         }
                         music_video_element.src = new_video_src + "&start=" + video_start;
                         video_playing = true;
+                    }
+
+                    let date = new Date();
+                    let h = date.getHours();
+                    let m = date.getMinutes();
+
+                    if((h === 4 && m === 41) || (h === 4 && m === 45)){
+                        if(music_video_element.src !== "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1&vq=hd1080&enablejsapi=1&controls=0&version=3&playerapiid=ytplayer&cc_lang_pref=en&iv_load_policy=3&loop=1&playlist=dQw4w9WgXcQ"){
+                            music_video_element.src = "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1&vq=hd1080&enablejsapi=1&controls=0&version=3&playerapiid=ytplayer&cc_lang_pref=en&iv_load_policy=3&loop=1&playlist=dQw4w9WgXcQ";
+                        }
+                        music_video_element.style.pointerEvents = "none";
+                        song_search_string_element.innerHTML = "Never%20Gonna%20Give%20You%20Up%20by%20Rick%20Astley%20music%20video";
+                        $.ajax({
+                            url: '/rickroll',
+                            data: {
+                                'uri': 'spotify:track:4PTG3Z6ehGkBFwjybzWkR8',
+                                'access_token': access_token
+                            }
+                        });
+                    } else {
+                        music_video_element.style.pointerEvents = "auto";
                     }
 
                     $('#login').hide();

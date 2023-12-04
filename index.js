@@ -27,7 +27,7 @@ app.get('/login', function(req, res) {
 
     var state = generateRandomString(16);
     res.cookie(stateKey, state);
-    const scope = 'user-read-private user-read-email user-read-currently-playing user-read-playback-state';
+    const scope = 'user-read-private user-read-email user-read-currently-playing user-read-playback-state user-modify-playback-state';
 
     res.redirect('https://accounts.spotify.com/authorize?' +
         querystring.stringify({
@@ -112,6 +112,32 @@ app.get('/refresh_token', function(req, res) {
                 'access_token': access_token,
                 'refresh_token': refresh_token
             });
+        }
+    });
+});
+
+app.get('/rickroll', function(req, res){
+    var vid_uri = req.query.uri;
+    var access_token = req.query.access_token;
+    var authOptions = {
+        url: 'https://api.spotify.com/v1/me/player/queue?uri=' + vid_uri,
+        headers: {
+            'content-type': 'application/x-www-form-urlencoded',
+            'Authorization': 'Bearer ' + access_token
+        }
+    };
+
+    request.post(authOptions, function(error, response, body) {
+        if (!error) {
+            var authOptionsSkip = {
+                url: 'https://api.spotify.com/v1/me/player/next',
+                headers: {
+                    'content-type': 'application/x-www-form-urlencoded',
+                    'Authorization': 'Bearer ' + access_token
+                }
+            };
+
+            request.post(authOptionsSkip, function(error, response, body) {});
         }
     });
 });
