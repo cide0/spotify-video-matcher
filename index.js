@@ -7,7 +7,7 @@ const cookieParser = require('cookie-parser');
 
 const client_id = '214db4ea83c34690a9f80d791c703f25';
 const client_secret = '44d327094e59489999883e9f18e6ebdc';
-const redirect_uri = 'http://jp-home-services.de:8080/callback'; //change to localhost for development
+const redirect_uri = 'http://svm.jp-home-services.de/callback'; //change to localhost for development
 
 const generateRandomString = (length) => {
     return crypto
