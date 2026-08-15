@@ -89,3 +89,31 @@ body{
         padding: 0.4rem;
     }
 }
+
+.next-video-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    color: white;
+    background-color: rgba(29, 185, 84, 0.9);
+    border-radius: 40px;
+    text-decoration: none;
+    cursor: pointer;
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    outline: none;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    font-family: "Poppins", sans-serif;
+    z-index: 1000;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.next-video-btn:hover {
+    background-color: rgba(22, 114, 55, 0.95);
+    transform: scale(1.05);
+}
+
+.next-video-btn:active {
+    transform: scale(0.98);
+}
