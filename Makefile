@@ -1,5 +1,6 @@
 .PHONY: build_dev
 build_dev:
+	npm install
 	docker build -f Dockerfile . \
 	-t svm/node:dev
 
