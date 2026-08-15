@@ -166,10 +166,6 @@ app.get('/youtube_search', function(req, res){
         return res.status(400).json({ error: 'Missing search query parameter' });
     }
     
-    if (current_google_api_key_index >= google_api_keys.length) {
-        return res.status(429).json({ error: 'All Google API keys have been exhausted' });
-    }
-    
     function trySearch(keyIndex) {
         if (keyIndex >= google_api_keys.length) {
             return res.status(429).json({ error: 'All Google API keys have been exhausted' });
@@ -205,7 +201,9 @@ app.get('/youtube_search', function(req, res){
         });
     }
     
-    trySearch(current_google_api_key_index);
+    // Start from the current index, or reset to 0 if we've exhausted all keys
+    var startIndex = current_google_api_key_index >= google_api_keys.length ? 0 : current_google_api_key_index;
+    trySearch(startIndex);
 });
 
 app.listen(process.env.PORT || 8080, '0.0.0.0', () => {

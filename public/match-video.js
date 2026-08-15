@@ -62,11 +62,10 @@
                     playResult(song_search_string, music_video_element, song_progress);
                 },
                 error: function(response){
-                    let message = response.responseJSON && response.responseJSON.error && response.responseJSON.error.message;
-                    if(message && message.includes('The request cannot be completed because you have exceeded your')){
+                    if(response.status === 429) {
                         alert('All google api keys have been used up for today :(');
-                    } else if(response.status === 429) {
-                        alert('All google api keys have been used up for today :(');
+                    } else {
+                        console.error('YouTube search failed:', response);
                     }
                 }
             });
