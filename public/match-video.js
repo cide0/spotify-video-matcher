@@ -151,7 +151,7 @@
                     
                     findEmbeddableVideo(current_results, 0, song_progress, music_video_element, function(video_id) {
                         if (video_id) {
-                            music_video_element.src = "https://www.youtube.com/embed/" + video_id + "?autoplay=1&mute=1&vq=hd1080&enablejsapi=1&version=3&playerapiid=ytplayer&cc_lang_pref=en&iv_load_policy=3&loop=1&playlist=" + video_id + "&start=" + Math.trunc((song_progress)/1000) + "&origin=http%3A%2F%2Flocalhost%3A8080";
+                            music_video_element.src = "https://www.youtube.com/embed/" + video_id + "?autoplay=1";
                         } else {
                             console.log('No embeddable video found for this song');
                         }
