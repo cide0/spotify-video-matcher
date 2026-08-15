@@ -21,6 +21,12 @@ const google_api_keys = [
 
 let current_google_api_key_index = 0;
 
+// Log loaded keys on startup
+console.log(`Loaded ${google_api_keys.length} Google API keys`);
+if (google_api_keys.length === 0) {
+    console.error('WARNING: No Google API keys loaded! Check environment variables.');
+}
+
 const generateRandomString = (length) => {
     return crypto
         .randomBytes(60)
@@ -166,10 +172,17 @@ app.get('/youtube_search', function(req, res){
         return res.status(400).json({ error: 'Missing search query parameter' });
     }
     
+    if (google_api_keys.length === 0) {
+        return res.status(500).json({ error: 'No Google API keys configured on server' });
+    }
+    
     function trySearch(keyIndex) {
         if (keyIndex >= google_api_keys.length) {
+            console.log('All API keys exhausted, attempted keys:', google_api_keys.length);
             return res.status(429).json({ error: 'All Google API keys have been exhausted' });
         }
+        
+        console.log(`Trying YouTube search with key index ${keyIndex}/${google_api_keys.length - 1}`);
         
         var searchOptions = {
             url: 'https://www.googleapis.com/youtube/v3/search',
@@ -185,17 +198,20 @@ app.get('/youtube_search', function(req, res){
         
         request.get(searchOptions, function(error, response, body) {
             if (error) {
+                console.error('YouTube API request error:', error.message);
                 return res.status(500).json({ error: 'Request failed', details: error.message });
             }
             
             if (response.statusCode === 403 && body.error && body.error.message && 
                 body.error.message.includes('The request cannot be completed because you have exceeded your')) {
                 // Rate limit hit, try next key
+                console.log(`Key ${keyIndex} rate limited, trying next key`);
                 current_google_api_key_index = keyIndex + 1;
                 trySearch(current_google_api_key_index);
             } else if (response.statusCode === 200) {
                 res.json(body);
             } else {
+                console.error('YouTube API error:', response.statusCode, body);
                 res.status(response.statusCode).json(body);
             }
         });
