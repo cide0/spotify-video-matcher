@@ -32,8 +32,6 @@ app.get('/login', function(req, res) {
     const scope = 'user-read-private user-read-email user-read-currently-playing user-read-playback-state user-modify-playback-state';
     const redirect_uri = base_url(req) + '/callback';
 
-    console.log('SPOTIFY LOGIN redirect_uri:', redirect_uri);
-
     res.redirect('https://accounts.spotify.com/authorize?' +
         querystring.stringify({
             response_type: 'code',
