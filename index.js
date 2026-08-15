@@ -166,22 +166,34 @@ app.get('/rickroll', function(req, res){
 });
 
 app.get('/youtube_search', function(req, res){
+    console.log('=== YouTube search request received ===');
+    console.log('Query:', req.query.q);
+    console.log('Current key index:', current_google_api_key_index);
+    console.log('Total keys available:', google_api_keys.length);
+    
     var search_query = req.query.q;
     
     if (!search_query) {
+        console.log('ERROR: Missing search query');
         return res.status(400).json({ error: 'Missing search query parameter' });
     }
     
     if (google_api_keys.length === 0) {
+        console.log('ERROR: No API keys configured');
         return res.status(500).json({ error: 'No Google API keys configured on server' });
     }
     
     // Reset index if it's out of bounds (safety check)
     if (current_google_api_key_index >= google_api_keys.length) {
+        console.log('RESET: Index was out of bounds, resetting to 0');
         current_google_api_key_index = 0;
     }
     
+    console.log('Starting search with index:', current_google_api_key_index);
+    
     function trySearch(keyIndex) {
+        console.log(`trySearch called with keyIndex: ${keyIndex}`);
+        
         if (keyIndex >= google_api_keys.length) {
             console.log('All API keys exhausted, attempted keys:', google_api_keys.length);
             // Reset for next request
@@ -209,6 +221,8 @@ app.get('/youtube_search', function(req, res){
                 return res.status(500).json({ error: 'Request failed', details: error.message });
             }
             
+            console.log('YouTube API response status:', response.statusCode);
+            
             if (response.statusCode === 403 && body.error && body.error.message && 
                 body.error.message.includes('The request cannot be completed because you have exceeded your')) {
                 // Rate limit hit, try next key
@@ -216,6 +230,7 @@ app.get('/youtube_search', function(req, res){
                 current_google_api_key_index = keyIndex + 1;
                 trySearch(current_google_api_key_index);
             } else if (response.statusCode === 200) {
+                console.log('SUCCESS: Video found');
                 res.json(body);
             } else {
                 console.error('YouTube API error:', response.statusCode, body);
