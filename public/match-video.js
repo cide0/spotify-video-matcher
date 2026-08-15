@@ -39,36 +39,10 @@
                 alert('All google api keys have been used up for today :(');
             } else {
                 $.ajax({
-                    url: 'https://www.googleapis.com/youtube/v3/search?key=' + google_api_keys[0] + '&type=video&q=' + song_search_string + '&part=snippet&videoEmbeddable=true&maxResults=10',
+                    url: 'https://www.googleapis.com/youtube/v3/search?key=' + google_api_keys[0] + '&type=video&q=' + song_search_string + '&part=snippet&videoEmbeddable=true',
                     success: function (response) {
-                        let results = response.items || [];
-                        if (results.length === 0) return;
-                        
-                        // Re-use the checkOEmbed function from loadVideo scope
-                        let checkOEmbedRetry = function(video_id, callback) {
-                            $.ajax({
-                                url: 'https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=' + video_id + '&format=json',
-                                success: function() { callback(true); },
-                                error: function() { callback(false); }
-                            });
-                        };
-                        
-                        let findEmbeddableRetry = function(index) {
-                            if (index >= results.length) {
-                                console.log('No embeddable videos found in retry');
-                                return;
-                            }
-                            let video_id = results[index].id.videoId;
-                            checkOEmbedRetry(video_id, function(embeddable) {
-                                if (embeddable) {
-                                    music_video_element.src = "https://www.youtube.com/embed/" + video_id + "?autoplay=1&mute=1&vq=hd1080&enablejsapi=1&version=3&playerapiid=ytplayer&cc_lang_pref=en&iv_load_policy=3&loop=1&playlist=" + video_id + "&start=" + Math.trunc((song_progress + 1400) / 1000) + "&origin=http%3A%2F%2Flocalhost%3A8080";
-                                } else {
-                                    findEmbeddableRetry(index + 1);
-                                }
-                            });
-                        };
-                        
-                        findEmbeddableRetry(0);
+                        let video_id = response.items[0].id.videoId;
+                        music_video_element.src = "https://www.youtube.com/embed/" + video_id + "?autoplay=1&mute=1&vq=hd1080&enablejsapi=1&version=3&playerapiid=ytplayer&cc_lang_pref=en&iv_load_policy=3&loop=1&playlist=" + video_id + "&start=" + Math.trunc((song_progress + 1400) / 1000) + "&origin=http%3A%2F%2Flocalhost%3A8080";
                     },
                     error: function (response){
                         retryLoadingVideo(response, song_search_string, music_video_element, song_progress);
@@ -95,39 +69,6 @@
             access_token = data.access_token;
         });
 
-        function checkOEmbed(video_id, callback) {
-            $.ajax({
-                url: 'https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=' + video_id + '&format=json',
-                success: function() {
-                    callback(true);
-                },
-                error: function() {
-                    callback(false);
-                }
-            });
-        }
-
-        function findEmbeddableVideo(results, index, song_progress, music_video_element, callback) {
-            if (index >= results.length) {
-                console.log('No embeddable videos found in search results');
-                callback(null);
-                return;
-            }
-            
-            let video_id = results[index].id.videoId;
-            console.log('Testing video ' + (index + 1) + '/' + results.length + ': ' + results[index].snippet.title);
-            
-            checkOEmbed(video_id, function(embeddable) {
-                if (embeddable) {
-                    console.log('✓ Video is embeddable: ' + video_id);
-                    callback(video_id);
-                } else {
-                    console.log('✗ Video not embeddable, trying next...');
-                    findEmbeddableVideo(results, index + 1, song_progress, music_video_element, callback);
-                }
-            });
-        }
-
         function playResult(song_search_string, music_video_element, song_progress){
             if (result_index >= current_results.length) {
                 result_index = 0;
@@ -141,21 +82,14 @@
 
         function searchAndPlay(song_search_string, music_video_element, song_progress){
             $.ajax({
-                url: 'https://www.googleapis.com/youtube/v3/search?key=' + google_api_keys[0] +'&type=video&q=' + song_search_string + '&part=snippet&videoEmbeddable=true&maxResults=10',
+                url: 'https://www.googleapis.com/youtube/v3/search?key=' + google_api_keys[0] +'&type=video&q=' + song_search_string + '&part=snippet&videoEmbeddable=true',
                 success: function(response) {
                     current_results = response.items || [];
                     result_index = 0;
                     if (current_results.length === 0) {
                         return;
                     }
-                    
-                    findEmbeddableVideo(current_results, 0, song_progress, music_video_element, function(video_id) {
-                        if (video_id) {
-                            music_video_element.src = "https://www.youtube.com/embed/" + video_id + "?autoplay=1&mute=1&vq=hd1080&enablejsapi=1&version=3&playerapiid=ytplayer&cc_lang_pref=en&iv_load_policy=3&loop=1&playlist=" + video_id + "&start=" + Math.trunc((song_progress)/1000) + "&origin=http%3A%2F%2Flocalhost%3A8080";
-                        } else {
-                            console.log('No embeddable video found for this song');
-                        }
-                    });
+                    playResult(song_search_string, music_video_element, song_progress);
                 },
                 error: function(response){
                     retryLoadingVideo(response, song_search_string, music_video_element, song_progress);
