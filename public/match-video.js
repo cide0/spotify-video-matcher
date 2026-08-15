@@ -1,13 +1,4 @@
 (function() {
-    google_api_keys = [
-        'AIzaSyAqFDCw0aurq3G33lsyMU1Rsmx0jUBo9WI',
-        'AIzaSyCYVvBN8U_Mh8kEHdIj8YgKPs1qyJZgSNQ',
-        'AIzaSyAQMjIEzOswbjYCZ2NvzpGePboQCMsnfno',
-        'AIzaSyCzW4obvmVSGFJlDOFgeEmHOT8fJZgJQ1Q',
-        'AIzaSyAL2Uxkv5kHMrcl-uPNicgEUUT2z3nLYpM',
-        'AIzaSyBIB6-WO1ZW4jn-aOXmAJPliFUW-_yypFQ'
-    ];
-
     let rickrolled = true;
     /**
      * Obtains parameters from the hash of the URL
@@ -32,23 +23,11 @@
     let video_playing = true;
 
     function retryLoadingVideo(response, song_search_string, music_video_element, song_progress){
-        let message = response.responseJSON.error.message;
-        if(message.includes('The request cannot be completed because you have exceeded your')){
-            google_api_keys.shift();
-            if(google_api_keys.length === 0){
-                alert('All google api keys have been used up for today :(');
-            } else {
-                $.ajax({
-                    url: 'https://www.googleapis.com/youtube/v3/search?key=' + google_api_keys[0] + '&type=video&q=' + song_search_string + '&part=snippet&videoEmbeddable=true',
-                    success: function (response) {
-                        let video_id = response.items[0].id.videoId;
-                        music_video_element.src = "https://www.youtube.com/embed/" + video_id + "?autoplay=1&mute=1&vq=hd1080&enablejsapi=1&version=3&playerapiid=ytplayer&cc_lang_pref=en&iv_load_policy=3&loop=1&playlist=" + video_id + "&start=" + Math.trunc((song_progress + 1400) / 1000);
-                    },
-                    error: function (response){
-                        retryLoadingVideo(response, song_search_string, music_video_element, song_progress);
-                    }
-                });
-            }
+        let message = response.responseJSON && response.responseJSON.error && response.responseJSON.error.message;
+        if(message && message.includes('The request cannot be completed because you have exceeded your')){
+            alert('All google api keys have been used up for today :(');
+        } else if(response.status === 429) {
+            alert('All google api keys have been used up for today :(');
         }
     }
 
@@ -82,7 +61,7 @@
 
         function searchAndPlay(song_search_string, music_video_element, song_progress){
             $.ajax({
-                url: 'https://www.googleapis.com/youtube/v3/search?key=' + google_api_keys[0] +'&type=video&q=' + song_search_string + '&part=snippet&videoEmbeddable=true',
+                url: '/youtube_search?q=' + song_search_string,
                 success: function(response) {
                     current_results = response.items || [];
                     result_index = 0;

@@ -9,6 +9,17 @@ const client_id = '214db4ea83c34690a9f80d791c703f25';
 const client_secret = '44d327094e59489999883e9f18e6ebdc';
 const base_url = 'http://192.168.2.147:8080'
 
+const google_api_keys = [
+    '«redacted:AIza…»',
+    '«redacted:AIza…»',
+    '«redacted:AIza…»',
+    '«redacted:AIza…»',
+    '«redacted:AIza…»',
+    '«redacted:AIza…»'
+];
+
+let current_google_api_key_index = 0;
+
 const generateRandomString = (length) => {
     return crypto
         .randomBytes(60)
@@ -145,6 +156,55 @@ app.get('/rickroll', function(req, res){
             request.post(authOptionsSkip, function(error, response, body) {});
         }
     });
+});
+
+app.get('/youtube_search', function(req, res){
+    var search_query = req.query.q;
+    
+    if (!search_query) {
+        return res.status(400).json({ error: 'Missing search query parameter' });
+    }
+    
+    if (current_google_api_key_index >= google_api_keys.length) {
+        return res.status(429).json({ error: 'All Google API keys have been exhausted' });
+    }
+    
+    function trySearch(keyIndex) {
+        if (keyIndex >= google_api_keys.length) {
+            return res.status(429).json({ error: 'All Google API keys have been exhausted' });
+        }
+        
+        var searchOptions = {
+            url: 'https://www.googleapis.com/youtube/v3/search',
+            qs: {
+                key: google_api_keys[keyIndex],
+                type: 'video',
+                q: search_query,
+                part: 'snippet',
+                videoEmbeddable: 'true'
+            },
+            json: true
+        };
+        
+        request.get(searchOptions, function(error, response, body) {
+            if (error) {
+                return res.status(500).json({ error: 'Request failed', details: error.message });
+            }
+            
+            if (response.statusCode === 403 && body.error && body.error.message && 
+                body.error.message.includes('The request cannot be completed because you have exceeded your')) {
+                // Rate limit hit, try next key
+                current_google_api_key_index = keyIndex + 1;
+                trySearch(current_google_api_key_index);
+            } else if (response.statusCode === 200) {
+                res.json(body);
+            } else {
+                res.status(response.statusCode).json(body);
+            }
+        });
+    }
+    
+    trySearch(current_google_api_key_index);
 });
 
 app.listen(8080);
