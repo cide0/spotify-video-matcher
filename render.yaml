@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: spotify-video-matcher
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    envVars:
+      - key: PORT
+        value: 8080
+      - key: SPOTIFY_CLIENT_ID
+        sync: false
+      - key: SPOTIFY_CLIENT_SECRET
+        sync: false
+      - key: BASE_URL
+        sync: false
+      - key: GOOGLE_API_KEY_1
+        sync: false
+      - key: GOOGLE_API_KEY_2
+        sync: false
+      - key: GOOGLE_API_KEY_3
+        sync: false
+      - key: GOOGLE_API_KEY_4
+        sync: false
+      - key: GOOGLE_API_KEY_5
+        sync: false
+      - key: GOOGLE_API_KEY_6
+        sync: false
