@@ -223,12 +223,20 @@ app.get('/youtube_search', function(req, res){
             
             console.log('YouTube API response status:', response.statusCode);
             
-            if (response.statusCode === 403 && body.error && body.error.message && 
-                body.error.message.includes('The request cannot be completed because you have exceeded your')) {
+            // Check for quota/rate limit errors (both 403 and 429)
+            var isQuotaError = (response.statusCode === 403 || response.statusCode === 429) && 
+                               body.error && body.error.message &&
+                               (body.error.message.includes('quota') || 
+                                body.error.message.includes('Quota') ||
+                                body.error.message.includes('exceeded') ||
+                                body.error.message.toLowerCase().includes('limit'));
+            
+            if (isQuotaError) {
                 // Rate limit hit, try next key
-                console.log(`Key ${keyIndex} rate limited, trying next key`);
-                current_google_api_key_index = keyIndex + 1;
-                trySearch(current_google_api_key_index);
+                console.log(`Key ${keyIndex} quota exceeded (${response.statusCode}), trying next key`);
+                var nextIndex = keyIndex + 1;
+                current_google_api_key_index = nextIndex;
+                trySearch(nextIndex);
             } else if (response.statusCode === 200) {
                 console.log('SUCCESS: Video found');
                 res.json(body);
