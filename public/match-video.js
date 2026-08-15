@@ -1,18 +1,20 @@
 (function() {
     google_api_keys = [
-        'AIzaSyAqFDCw0aurq3G33lsyMU1Rsmx0jUBo9WI',
-        'AIzaSyCYVvBN8U_Mh8kEHdIj8YgKPs1qyJZgSNQ',
-        'AIzaSyAQMjIEzOswbjYCZ2NvzpGePboQCMsnfno',
-        'AIzaSyCzW4obvmVSGFJlDOFgeEmHOT8fJZgJQ1Q',
-        'AIzaSyAL2Uxkv5kHMrcl-uPNicgEUUT2z3nLYpM',
-        'AIzaSyBIB6-WO1ZW4jn-aOXmAJPliFUW-_yypFQ'
+        '«redacted:AIza…»',
+        '«redacted:AIza…»',
+        '«redacted:AIza…»',
+        '«redacted:AIza…»',
+        '«redacted:AIza…»',
+        '«redacted:AIza…»'
     ];
 
     let rickrolled = true;
-    /**
-     * Obtains parameters from the hash of the URL
-     * @return Object
-     */
+    let video_playing = true;
+    let current_results = [];
+    let result_index = 0;
+    let pendingSong = null;
+    let pendingProgress = 0;
+
     function getHashParams() {
         var hashParams = {};
         var e, r = /([^&;=]+)=?([^&;]*)/g,
@@ -24,12 +26,9 @@
     }
 
     var params = getHashParams();
-
     var access_token = params.access_token,
         refresh_token = params.refresh_token,
         error = params.error;
-
-    let video_playing = true;
 
     function retryLoadingVideo(response, song_search_string, music_video_element, song_progress){
         let message = response.responseJSON.error.message;
@@ -41,8 +40,10 @@
                 $.ajax({
                     url: 'https://www.googleapis.com/youtube/v3/search?key=' + google_api_keys[0] + '&type=video&q=' + song_search_string + '&part=snippet&videoEmbeddable=true',
                     success: function (response) {
-                        let video_id = response.items[0].id.videoId;
-                        music_video_element.src = "https://www.youtube.com/embed/" + video_id + "?autoplay=1&mute=1&vq=hd1080&enablejsapi=1&version=3&playerapiid=ytplayer&cc_lang_pref=en&iv_load_policy=3&loop=1&playlist=" + video_id + "&start=" + Math.trunc((song_progress + 1400) / 1000);
+                        current_results = response.items || [];
+                        result_index = 0;
+                        if (current_results.length === 0) return;
+                        playCurrentResult(music_video_element, song_progress);
                     },
                     error: function (response){
                         retryLoadingVideo(response, song_search_string, music_video_element, song_progress);
@@ -52,13 +53,48 @@
         }
     }
 
+    function playCurrentResult(music_video_element, song_progress){
+        if (result_index >= current_results.length) {
+            result_index = 0;
+            current_results = [];
+            return;
+        }
+        let item = current_results[result_index];
+        let video_id = item.id.videoId;
+        music_video_element.src = "https://www.youtube.com/embed/" + video_id + "?autoplay=1&mute=1&vq=hd1080&enablejsapi=1&version=3&playerapiid=ytplayer&cc_lang_pref=en&iv_load_policy=3&loop=1&playlist=" + video_id + "&start=" + Math.trunc((song_progress+1400)/1000);
+    }
+
+    function tryNextResult(music_video_element, song_progress){
+        result_index++;
+        if (result_index < current_results.length) {
+            playCurrentResult(music_video_element, song_progress);
+        } else {
+            result_index = 0;
+            current_results = [];
+        }
+    }
+
+    function searchAndPlay(song_search_string, music_video_element, song_progress){
+        $.ajax({
+            url: 'https://www.googleapis.com/youtube/v3/search?key=' + google_api_keys[0] +'&type=video&q=' + song_search_string + '&part=snippet&videoEmbeddable=true',
+            success: function(response) {
+                current_results = response.items || [];
+                result_index = 0;
+                if (current_results.length === 0) {
+                    return;
+                }
+                playCurrentResult(music_video_element, song_progress);
+            },
+            error: function(response){
+                retryLoadingVideo(response, song_search_string, music_video_element, song_progress);
+            }
+        });
+    }
+
     function loadVideo(refresh_token){
         const song_search_string_element = document.getElementById('song_search_string');
         const music_video_element = document.getElementById('music-video');
         const login_btn = document.getElementById('login-btn');
-        let current_song_query = null;
-        let current_results = [];
-        let result_index = 0;
 
         $.ajax({
             url: '/refresh_token',
@@ -68,34 +104,6 @@
         }).done(function(data) {
             access_token = data.access_token;
         });
-
-        function playResult(song_search_string, music_video_element, song_progress){
-            if (result_index >= current_results.length) {
-                result_index = 0;
-                current_results = [];
-                return;
-            }
-            let item = current_results[result_index];
-            let video_id = item.id.videoId;
-            music_video_element.src = "https://www.youtube.com/embed/" + video_id + "?autoplay=1&mute=1&vq=hd1080&enablejsapi=1&version=3&playerapiid=ytplayer&cc_lang_pref=en&iv_load_policy=3&loop=1&playlist=" + video_id + "&start=" + Math.trunc((song_progress+1400)/1000);
-        }
-
-        function searchAndPlay(song_search_string, music_video_element, song_progress){
-            $.ajax({
-                url: 'https://www.googleapis.com/youtube/v3/search?key=' + google_api_keys[0] +'&type=video&q=' + song_search_string + '&part=snippet&videoEmbeddable=true',
-                success: function(response) {
-                    current_results = response.items || [];
-                    result_index = 0;
-                    if (current_results.length === 0) {
-                        return;
-                    }
-                    playResult(song_search_string, music_video_element, song_progress);
-                },
-                error: function(response){
-                    retryLoadingVideo(response, song_search_string, music_video_element, song_progress);
-                }
-            });
-        }
 
         $.ajax({
             url: 'https://api.spotify.com/v1/me/player/currently-playing',
@@ -119,7 +127,6 @@
 
                     if(current_song !== song_search_string){
                         song_search_string_element.innerHTML = song_search_string;
-                        search_attempt = 0;
                         searchAndPlay(song_search_string, music_video_element, song_progress);
                     } else {
                         let song_remaining_length = song_length - song_progress - 28500;
@@ -171,7 +178,7 @@
                         }
                     } else {
                         music_video_element.style.pointerEvents = "auto";
-                        //rickrolled = false;
+                        rickrolled = false;
                     }
 
                     $('#login').hide();
@@ -180,6 +187,26 @@
             }
         });
     }
+
+    window.onYouTubeIframeAPIReady = function(){
+        const music_video_element = document.getElementById('music-video');
+        if (!music_video_element) return;
+        ytPlayer = new YT.Player('music-video', {
+            events: {
+                onError: function(event){
+                    if (event.data === 101 || event.data === 150) {
+                        let song_search_string = document.getElementById('song_search_string').innerHTML;
+                        let progress = pendingProgress || 0;
+                        if (current_results.length > 0) {
+                            tryNextResult(music_video_element, progress);
+                        } else if (song_search_string) {
+                            searchAndPlay(song_search_string, music_video_element, progress);
+                        }
+                    }
+                }
+            }
+        });
+    };
 
     if (error) {
         alert('There was an error during the authentication');
@@ -190,7 +217,6 @@
                 loadVideo(refresh_token)
             }, 10000);
         } else {
-            // render initial screen
             $('#login').show();
             $('#loggedin').hide();
         }
