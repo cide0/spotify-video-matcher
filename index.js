@@ -26,7 +26,7 @@ app.use(express.static(__dirname + '/public'))
 app.get('/login', function(req, res) {
 
     var state = generateRandomString(16);
-    res.cookie(stateKey, state);
+    res.cookie(stateKey, state, { httpOnly: true, path: '/', maxAge: 600000 });
     const scope = 'user-read-private user-read-email user-read-currently-playing user-read-playback-state user-modify-playback-state';
 
     res.redirect('https://accounts.spotify.com/authorize?' +
@@ -46,12 +46,13 @@ app.get('/callback', function(req, res) {
     var storedState = req.cookies ? req.cookies[stateKey] : null;
 
     if (state === null || state !== storedState) {
+        res.clearCookie(stateKey, { path: '/' });
         res.redirect('/#' +
             querystring.stringify({
                 error: 'state_mismatch'
             }));
     } else {
-        res.clearCookie(stateKey);
+        res.clearCookie(stateKey, { path: '/' });
         var authOptions = {
             url: 'https://accounts.spotify.com/api/token',
             form: {
