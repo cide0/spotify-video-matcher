@@ -1,5 +1,18 @@
 # Spotify Video Matcher
 
+This small app allows you to watch YouTube music videos for Spotify songs you are listening to. 
+It uses the Spotify API to get playback information and the YouTube Data API to search for the videos.
+
+## Current Features
+
+- Tries to start video in sync with the song by skipping to the current playback position of the song
+- Pauses the video when the song is paused via Spotify (Refreshes every 10 seconds)
+- Resumes the video when the song is resumed via Spotify (Refreshes every 10 seconds)
+- Automatically switches to the next video when the song changes
+
+Notes: If you run it locally, many videos will probably not be embeddable as some embeds are blocked by YouTube on http. 
+Using a host with https should resolve this issue.
+
 ## Setup
 
 1. Create a new app in the Spotify Developer Dashboard: https://developer.spotify.com/dashboard/applications
