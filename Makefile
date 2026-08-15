@@ -12,11 +12,6 @@ run:
 stop:
 	docker-compose -f docker-compose.yml down
 
-.PHONY: pull
-pull:
-	@echo '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'
-	git pull origin main
-
 .PHONY: list
 list:
 	@echo
