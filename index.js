@@ -4,19 +4,20 @@ const crypto = require('crypto');
 const cors = require('cors');
 const querystring = require('querystring');
 const cookieParser = require('cookie-parser');
+require('dotenv').config();
 
-const client_id = '214db4ea83c34690a9f80d791c703f25';
-const client_secret = '44d327094e59489999883e9f18e6ebdc';
-const base_url = 'http://192.168.2.147:8080'
+const client_id = process.env.SPOTIFY_CLIENT_ID;
+const client_secret = process.env.SPOTIFY_CLIENT_SECRET;
+const base_url = process.env.BASE_URL;
 
 const google_api_keys = [
-    'AIzaSyAqFDCw0aurq3G33lsyMU1Rsmx0jUBo9WI',
-    'AIzaSyCYVvBN8U_Mh8kEHdIj8YgKPs1qyJZgSNQ',
-    'AIzaSyAQMjIEzOswbjYCZ2NvzpGePboQCMsnfno',
-    'AIzaSyCzW4obvmVSGFJlDOFgeEmHOT8fJZgJQ1Q',
-    'AIzaSyAL2Uxkv5kHMrcl-uPNicgEUUT2z3nLYpM',
-    'AIzaSyBIB6-WO1ZW4jn-aOXmAJPliFUW-_yypFQ'
-];
+    process.env.GOOGLE_API_KEY_1,
+    process.env.GOOGLE_API_KEY_2,
+    process.env.GOOGLE_API_KEY_3,
+    process.env.GOOGLE_API_KEY_4,
+    process.env.GOOGLE_API_KEY_5,
+    process.env.GOOGLE_API_KEY_6
+].filter(key => key); // Filter out undefined keys
 
 let current_google_api_key_index = 0;
 
@@ -207,4 +208,6 @@ app.get('/youtube_search', function(req, res){
     trySearch(current_google_api_key_index);
 });
 
-app.listen(8080);
+app.listen(process.env.PORT || 8080, () => {
+    console.log(`Server running on port ${process.env.PORT || 8080}`);
+});
