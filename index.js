@@ -7,7 +7,7 @@ const cookieParser = require('cookie-parser');
 
 const client_id = '214db4ea83c34690a9f80d791c703f25';
 const client_secret = '44d327094e59489999883e9f18e6ebdc';
-const base_url = 'http://127.0.0.1:8080'
+const base_url = 'http://192.168.2.147:8080/'
 
 const generateRandomString = (length) => {
     return crypto
