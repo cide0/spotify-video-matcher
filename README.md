@@ -9,9 +9,10 @@ It uses the Spotify API to get playback information and the YouTube Data API to 
 - Pauses the video when the song is paused via Spotify (Refreshes every 10 seconds)
 - Resumes the video when the song is resumed via Spotify (Refreshes every 10 seconds)
 - Automatically switches to the next video when the song changes
+- Rick-roll possibility :)
 
 Notes: If you run it locally, many videos will probably not be embeddable as some embeds are blocked by YouTube on http. 
-Using a host with https should resolve this issue.
+Using a host with https should resolve this issue, at least it did for me.
 
 ## Setup
 
