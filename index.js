@@ -4,7 +4,7 @@ const crypto = require('crypto');
 const cors = require('cors');
 const querystring = require('querystring');
 const cookieParser = require('cookie-parser');
-require('dotenv').config();
+require('dotenv').config({ override: true });
 
 const client_id = process.env.SPOTIFY_CLIENT_ID;
 const client_secret = process.env.SPOTIFY_CLIENT_SECRET;
