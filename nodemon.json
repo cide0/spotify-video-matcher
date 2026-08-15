@@ -1,0 +1,14 @@
+{
+  "watch": [
+    "*.js",
+    "public/**/*.js",
+    "public/**/*.html",
+    "public/**/*.css",
+    ".env"
+  ],
+  "ext": "js,html,css,env",
+  "ignore": [
+    "node_modules/**"
+  ],
+  "verbose": true
+}
