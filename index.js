@@ -10,12 +10,12 @@ const client_secret = '44d327094e59489999883e9f18e6ebdc';
 const base_url = 'http://192.168.2.147:8080'
 
 const google_api_keys = [
-    '«redacted:AIza…»',
-    '«redacted:AIza…»',
-    '«redacted:AIza…»',
-    '«redacted:AIza…»',
-    '«redacted:AIza…»',
-    '«redacted:AIza…»'
+    'AIzaSyAqFDCw0aurq3G33lsyMU1Rsmx0jUBo9WI',
+    'AIzaSyCYVvBN8U_Mh8kEHdIj8YgKPs1qyJZgSNQ',
+    'AIzaSyAQMjIEzOswbjYCZ2NvzpGePboQCMsnfno',
+    'AIzaSyCzW4obvmVSGFJlDOFgeEmHOT8fJZgJQ1Q',
+    'AIzaSyAL2Uxkv5kHMrcl-uPNicgEUUT2z3nLYpM',
+    'AIzaSyBIB6-WO1ZW4jn-aOXmAJPliFUW-_yypFQ'
 ];
 
 let current_google_api_key_index = 0;

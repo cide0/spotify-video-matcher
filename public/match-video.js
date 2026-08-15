@@ -22,15 +22,6 @@
 
     let video_playing = true;
 
-    function retryLoadingVideo(response, song_search_string, music_video_element, song_progress){
-        let message = response.responseJSON && response.responseJSON.error && response.responseJSON.error.message;
-        if(message && message.includes('The request cannot be completed because you have exceeded your')){
-            alert('All google api keys have been used up for today :(');
-        } else if(response.status === 429) {
-            alert('All google api keys have been used up for today :(');
-        }
-    }
-
     function loadVideo(refresh_token){
         const song_search_string_element = document.getElementById('song_search_string');
         const music_video_element = document.getElementById('music-video');
@@ -71,7 +62,12 @@
                     playResult(song_search_string, music_video_element, song_progress);
                 },
                 error: function(response){
-                    retryLoadingVideo(response, song_search_string, music_video_element, song_progress);
+                    let message = response.responseJSON && response.responseJSON.error && response.responseJSON.error.message;
+                    if(message && message.includes('The request cannot be completed because you have exceeded your')){
+                        alert('All google api keys have been used up for today :(');
+                    } else if(response.status === 429) {
+                        alert('All google api keys have been used up for today :(');
+                    }
                 }
             });
         }
