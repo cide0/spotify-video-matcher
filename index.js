@@ -28,7 +28,7 @@ app.use(express.static(__dirname + '/public'))
 app.get('/login', function(req, res) {
 
     var state = generateRandomString(16);
-    res.cookie(stateKey, state, { httpOnly: true, path: '/', maxAge: 600000 });
+    res.cookie(stateKey, state, { httpOnly: true, path: '/', maxAge: 600000, sameSite: 'lax' });
     const scope = 'user-read-private user-read-email user-read-currently-playing user-read-playback-state user-modify-playback-state';
     const redirect_uri = base_url(req) + '/callback';
 
@@ -84,9 +84,11 @@ app.get('/callback', function(req, res) {
                         refresh_token: refresh_token
                     }));
             } else {
+                const spotifyError = body && body.error_description ? body.error_description : (body && body.error ? JSON.stringify(body.error) : 'unknown_error');
                 res.redirect('/#' +
                     querystring.stringify({
-                        error: 'invalid_token'
+                        error: 'invalid_token',
+                        error_description: spotifyError
                     }));
             }
         });
