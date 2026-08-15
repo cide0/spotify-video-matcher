@@ -176,9 +176,16 @@ app.get('/youtube_search', function(req, res){
         return res.status(500).json({ error: 'No Google API keys configured on server' });
     }
     
+    // Reset index if it's out of bounds (safety check)
+    if (current_google_api_key_index >= google_api_keys.length) {
+        current_google_api_key_index = 0;
+    }
+    
     function trySearch(keyIndex) {
         if (keyIndex >= google_api_keys.length) {
             console.log('All API keys exhausted, attempted keys:', google_api_keys.length);
+            // Reset for next request
+            current_google_api_key_index = 0;
             return res.status(429).json({ error: 'All Google API keys have been exhausted' });
         }
         
@@ -217,9 +224,7 @@ app.get('/youtube_search', function(req, res){
         });
     }
     
-    // Start from the current index, or reset to 0 if we've exhausted all keys
-    var startIndex = current_google_api_key_index >= google_api_keys.length ? 0 : current_google_api_key_index;
-    trySearch(startIndex);
+    trySearch(current_google_api_key_index);
 });
 
 app.listen(process.env.PORT || 8080, '0.0.0.0', () => {
