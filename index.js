@@ -21,12 +21,6 @@ const google_api_keys = [
 
 let current_google_api_key_index = 0;
 
-// Log loaded keys on startup
-console.log(`Loaded ${google_api_keys.length} Google API keys`);
-if (google_api_keys.length === 0) {
-    console.error('WARNING: No Google API keys loaded! Check environment variables.');
-}
-
 const generateRandomString = (length) => {
     return crypto
         .randomBytes(60)
@@ -166,42 +160,27 @@ app.get('/rickroll', function(req, res){
 });
 
 app.get('/youtube_search', function(req, res){
-    console.log('=== YouTube search request received ===');
-    console.log('Query:', req.query.q);
-    console.log('Current key index:', current_google_api_key_index);
-    console.log('Total keys available:', google_api_keys.length);
-    
     var search_query = req.query.q;
     
     if (!search_query) {
-        console.log('ERROR: Missing search query');
         return res.status(400).json({ error: 'Missing search query parameter' });
     }
     
     if (google_api_keys.length === 0) {
-        console.log('ERROR: No API keys configured');
         return res.status(500).json({ error: 'No Google API keys configured on server' });
     }
     
     // Reset index if it's out of bounds (safety check)
     if (current_google_api_key_index >= google_api_keys.length) {
-        console.log('RESET: Index was out of bounds, resetting to 0');
         current_google_api_key_index = 0;
     }
     
-    console.log('Starting search with index:', current_google_api_key_index);
-    
     function trySearch(keyIndex) {
-        console.log(`trySearch called with keyIndex: ${keyIndex}`);
-        
         if (keyIndex >= google_api_keys.length) {
-            console.log('All API keys exhausted, attempted keys:', google_api_keys.length);
             // Reset for next request
             current_google_api_key_index = 0;
             return res.status(429).json({ error: 'All Google API keys have been exhausted' });
         }
-        
-        console.log(`Trying YouTube search with key index ${keyIndex}/${google_api_keys.length - 1}`);
         
         var searchOptions = {
             url: 'https://www.googleapis.com/youtube/v3/search',
@@ -217,11 +196,8 @@ app.get('/youtube_search', function(req, res){
         
         request.get(searchOptions, function(error, response, body) {
             if (error) {
-                console.error('YouTube API request error:', error.message);
                 return res.status(500).json({ error: 'Request failed', details: error.message });
             }
-            
-            console.log('YouTube API response status:', response.statusCode);
             
             // Check for quota/rate limit errors (both 403 and 429)
             var isQuotaError = (response.statusCode === 403 || response.statusCode === 429) && 
@@ -233,15 +209,12 @@ app.get('/youtube_search', function(req, res){
             
             if (isQuotaError) {
                 // Rate limit hit, try next key
-                console.log(`Key ${keyIndex} quota exceeded (${response.statusCode}), trying next key`);
                 var nextIndex = keyIndex + 1;
                 current_google_api_key_index = nextIndex;
                 trySearch(nextIndex);
             } else if (response.statusCode === 200) {
-                console.log('SUCCESS: Video found');
                 res.json(body);
             } else {
-                console.error('YouTube API error:', response.statusCode, body);
                 res.status(response.statusCode).json(body);
             }
         });
