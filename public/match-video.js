@@ -42,7 +42,7 @@
                     url: 'https://www.googleapis.com/youtube/v3/search?key=' + google_api_keys[0] + '&type=video&q=' + song_search_string + '&part=snippet&videoEmbeddable=true',
                     success: function (response) {
                         let video_id = response.items[0].id.videoId;
-                        music_video_element.src = "https://www.youtube.com/embed/" + video_id + "?autoplay=1&mute=1&vq=hd1080&enablejsapi=1&version=3&playerapiid=ytplayer&cc_lang_pref=en&iv_load_policy=3&loop=1&playlist=" + video_id + "&start=" + Math.trunc((song_progress + 1400) / 1000);
+                        music_video_element.src = "https://www.youtube.com/embed/" + video_id + "?autoplay=1&mute=1&vq=hd1080&enablejsapi=1&version=3&playerapiid=ytplayer&cc_lang_pref=en&iv_load_policy=3&loop=1&playlist=" + video_id + "&start=" + Math.trunc((song_progress + 1400) / 1000) + "&origin=" + encodeURIComponent(window.location.origin);
                     },
                     error: function (response){
                         retryLoadingVideo(response, song_search_string, music_video_element, song_progress);
@@ -77,7 +77,7 @@
             }
             let item = current_results[result_index];
             let video_id = item.id.videoId;
-            music_video_element.src = "https://www.youtube.com/embed/" + video_id + "?autoplay=1&mute=1&vq=hd1080&enablejsapi=1&version=3&playerapiid=ytplayer&cc_lang_pref=en&iv_load_policy=3&loop=1&playlist=" + video_id + "&start=" + Math.trunc((song_progress+1400)/1000);
+            music_video_element.src = "https://www.youtube.com/embed/" + video_id + "?autoplay=1&mute=1&vq=hd1080&enablejsapi=1&version=3&playerapiid=ytplayer&cc_lang_pref=en&iv_load_policy=3&loop=1&playlist=" + video_id + "&start=" + Math.trunc((song_progress+1400)/1000) + "&origin=" + encodeURIComponent(window.location.origin);
         }
 
         function searchAndPlay(song_search_string, music_video_element, song_progress){
@@ -155,8 +155,8 @@
                     if((h === 10 && m === 30)
                     ){
                         if(!rickrolled){
-                            if(music_video_element.src !== "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1&vq=hd1080&enablejsapi=1&controls=0&version=3&playerapiid=ytplayer&cc_lang_pref=en&iv_load_policy=3&loop=1&playlist=dQw4w9WgXcQ"){
-                                music_video_element.src = "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1&vq=hd1080&enablejsapi=1&controls=0&version=3&playerapiid=ytplayer&cc_lang_pref=en&iv_load_policy=3&loop=1&playlist=dQw4w9WgXcQ";
+                            if(music_video_element.src !== "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1&vq=hd1080&enablejsapi=1&controls=0&version=3&playerapiid=ytplayer&cc_lang_pref=en&iv_load_policy=3&loop=1&playlist=dQw4w9WgXcQ&origin=" + encodeURIComponent(window.location.origin)){
+                                music_video_element.src = "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1&vq=hd1080&enablejsapi=1&controls=0&version=3&playerapiid=ytplayer&cc_lang_pref=en&iv_load_policy=3&loop=1&playlist=dQw4w9WgXcQ&origin=" + encodeURIComponent(window.location.origin);
                             }
                             music_video_element.style.pointerEvents = "none";
                             song_search_string_element.innerHTML = "Never%20Gonna%20Give%20You%20Up%20by%20Rick%20Astley%20music%20video";
