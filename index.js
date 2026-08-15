@@ -10,6 +10,7 @@ const client_secret = '44d327094e59489999883e9f18e6ebdc';
 const base_url = function(req) {
     return (req.protocol === 'https' ? 'https' : 'http') + '://' + req.get('host');
 };
+const redirect_uri = process.env.REDIRECT_URI || null;
 
 const generateRandomString = (length) => {
     return crypto
@@ -30,7 +31,7 @@ app.get('/login', function(req, res) {
     var state = generateRandomString(16);
     res.cookie(stateKey, state, { httpOnly: true, path: '/', maxAge: 600000, sameSite: 'lax' });
     const scope = 'user-read-private user-read-email user-read-currently-playing user-read-playback-state user-modify-playback-state';
-    const redirect_uri = base_url(req) + '/callback';
+    const redirect_uri = process.env.REDIRECT_URI || base_url(req) + '/callback';
 
     res.redirect('https://accounts.spotify.com/authorize?' +
         querystring.stringify({
@@ -47,7 +48,7 @@ app.get('/callback', function(req, res) {
     var code = req.query.code || null;
     var state = req.query.state || null;
     var storedState = req.cookies ? req.cookies[stateKey] : null;
-    const redirect_uri = base_url(req) + '/callback';
+    const redirect_uri = process.env.REDIRECT_URI || base_url(req) + '/callback';
 
     if (state === null || state !== storedState) {
         res.clearCookie(stateKey, { path: '/' });
