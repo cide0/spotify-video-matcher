@@ -223,6 +223,10 @@ app.get('/youtube_search', function(req, res){
     trySearch(current_google_api_key_index);
 });
 
-app.listen(process.env.PORT || 8080, '0.0.0.0', () => {
-    console.log(`Server running on port ${process.env.PORT || 8080}`);
-});
+if(base_url.includes('http://127.0.0.1')) {
+    app.listen(process.env.PORT || 8080);
+} else {
+    app.listen(process.env.PORT || 8080, '0.0.0.0', () => {
+        console.log(`Server running on port ${process.env.PORT || 8080}`);
+    });
+}
