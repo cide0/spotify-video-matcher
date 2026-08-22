@@ -1,6 +1,6 @@
 (function() {
-    // 5.000 because this is in milliseconds
-    const windowInterval = 5000;
+    // interval of how often the whole script repeats
+    const windowInterval = 3000;
     // add this from the Spotify song playtime to account for network traffic delay and the time it takes to load the video
     const networkTrafficDelay = 1325;
     // the time that should be subtracted to account for the network traffic delay when setting the timeout to instantly load the new song after a switch

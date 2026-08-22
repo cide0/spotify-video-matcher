@@ -7,8 +7,8 @@ It uses the Spotify API to get playback information and the YouTube Data API to 
 ## Current Features
 
 - Tries to start video in sync with the song by skipping to the current playback position of the song.
-- Pauses the video when the song is paused via Spotify (Refreshes every 10 seconds).
-- Resumes the video when the song is resumed via Spotify (Refreshes every 10 seconds).
+- Pauses the video when the song is paused via Spotify (Refreshes every 3 seconds).
+- Resumes the video when the song is resumed via Spotify (Refreshes every 3 seconds).
 - Automatically switches to the next video when the song changes.
 - Rick-roll possibility! :trollface:
 
