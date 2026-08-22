@@ -1,15 +1,21 @@
-.PHONY: build_dev
-build_dev:
-	npm install
+.PHONY: build-dev
+build-dev:
 	docker build -f Dockerfile . \
 	-t svm/node:dev
 
-.PHONY: run
-run:
+.PHONY: install
+install: npm-install build-dev
+
+.PHONY: npm-install
+npm-install:
+	npm install
+
+.PHONY: up
+up:
 	docker-compose -f docker-compose.yml up -d
 
-.PHONY: stop
-stop:
+.PHONY: down
+down:
 	docker-compose -f docker-compose.yml down
 
 .PHONY: list
