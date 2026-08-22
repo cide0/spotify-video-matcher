@@ -2,7 +2,7 @@
 <h1 align="center">Spotify Video Matcher</h1>
 <p align="center"><img src="https://img.shields.io/github/v/tag/cide0/spotify-video-matcher?label=latest%20version&style=flat-square"/></p>
 
-This small app allows you to watch YouTube music videos live for Spotify songs you are currently listening to. 
+This small web app allows you to watch YouTube music videos live for Spotify songs you are currently listening to. 
 It uses the Spotify API to get playback information and the YouTube Data API to search for the videos.
 
 ## Current Features
