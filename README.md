@@ -1,4 +1,4 @@
-<p align="center"><img src="./public/favicon.png" alt="icon" width="70"/></p>
+<p align="center"><img src="./public/favicon.png" alt="icon" width="80"/></p>
 <h1 align="center">Spotify Video Matcher</h1>
 <p align="center"><img src="https://img.shields.io/github/v/tag/cide0/spotify-video-matcher?label=latest%20version&style=flat-square"/></p>
 
