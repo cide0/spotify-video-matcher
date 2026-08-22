@@ -5,6 +5,8 @@
     const networkTrafficDelay = 1325;
     // the time that should be subtracted to account for the network traffic delay when setting the timeout to instantly load the new song after a switch
     const networkTrafficDelayForSongSwitch = 28500;
+    //used to calculate the song switch timeouts around the base value of networkTrafficDelayForSongSwitch
+    const songSwitchTimeoutZoneDelimiter = 100;
 
     let rickrolled = true;
     /**
@@ -110,9 +112,21 @@
                     } else {
                         if(!song_specific_timeout_set) {
                             let song_remaining_length = song_length - song_progress - networkTrafficDelayForSongSwitch;
+                            // setting 3 timeouts here as this cant be accurately estimated, so instead of only trying once it tries in a boundary around the default time delay
+                            // early timeout
+                            setTimeout(function(){
+                                loadVideo(refresh_token);
+                            }, song_remaining_length - songSwitchTimeoutZoneDelimiter);
+
+                            // middle ground timeout
                             setTimeout(function(){
                                 loadVideo(refresh_token);
                             }, song_remaining_length);
+
+                            // late timeout
+                            setTimeout(function(){
+                                loadVideo(refresh_token);
+                            }, song_remaining_length + songSwitchTimeoutZoneDelimiter);
 
                             // we only want to set this custom timeout once per song, if not the call count would grow huge as it always sets to call itself
                             song_specific_timeout_set = true;
