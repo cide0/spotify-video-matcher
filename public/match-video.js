@@ -2,9 +2,9 @@
     // 10.000 because this is in milliseconds
     const windowInterval = 10000;
     // add this from the Spotify song playtime to account for network traffic delay and the time it takes to load the video
-    const networkTrafficDelay = 1350;
+    const networkTrafficDelay = 1300;
     // the time that should be subtracted to account for the network traffic delay when setting the timeout to instantly load the new song after a switch
-    const networkTrafficDelayForSongSwitch = 28000;
+    const networkTrafficDelayForSongSwitch = 29000;
 
     let rickrolled = true;
     /**
@@ -135,14 +135,16 @@
                     if(song_playing && !video_playing){
                         let video_start = Math.trunc((song_progress+networkTrafficDelay)/1000);
                         let new_video_src = music_video_element.src;
-                        //remove the current start param if its already in URL, so that the new one can be applied
+                        // remove the current start param if its already in URL, so that the new one can be applied
                         if(new_video_src.includes('&start=')){
                             let start_param_index = new_video_src.indexOf('&start=');
                             new_video_src = new_video_src.slice(0, start_param_index);
                         }
                         music_video_element.src = new_video_src + "&start=" + video_start;
-                        //set video to playing again
+                        // set video to playing again
                         video_playing = true;
+                        // reset the song specific timeout toggle as the old one may be incorrect now because the video was paused
+                        song_specific_timeout_set = false;
                     }
 
                     //rick-roll logic
