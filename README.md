@@ -1,4 +1,4 @@
-<p align="center"><img src="./public/favicon.png" alt="icon" width="90"/></p>
+<p align="center"><img src="./public/favicon.png" alt="icon" width="70"/></p>
 <h1 align="center">Spotify Video Matcher</h1>
 
 This small app allows you to watch YouTube music videos live for Spotify songs you are currently listening to. 

@@ -6,7 +6,7 @@
     // the time that should be subtracted to account for the network traffic delay when setting the timeout to instantly load the new song after a switch
     const networkTrafficDelayForSongSwitch = 28500;
     //used to calculate the song switch timeouts around the base value of networkTrafficDelayForSongSwitch
-    const songSwitchTimeoutZoneDelimiter = 100;
+    const songSwitchTimeoutZoneDelimiter = 250;
 
     let rickrolled = true;
     /**
