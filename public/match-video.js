@@ -2,7 +2,9 @@
     // 10.000 because this is in milliseconds
     const windowInterval = 10000;
     // add this from the Spotify song playtime to account for network traffic delay and the time it takes to load the video
-    const networkTrafficDelay = 1200;
+    const networkTrafficDelay = 1350;
+    // the time that should be subtracted to account for the network traffic delay when setting the timeout to instantly load the new song after a switch
+    const networkTrafficDelayForSongSwitch = 28000;
 
     let rickrolled = true;
     /**
@@ -107,7 +109,7 @@
                     // if they are the same, the current video is already the correct one, but we can try to set a timeout so that we try to load a new video exactly when the song is over
                     } else {
                         if(!song_specific_timeout_set) {
-                            let song_remaining_length = song_length - song_progress - 28500;
+                            let song_remaining_length = song_length - song_progress - networkTrafficDelayForSongSwitch;
                             setTimeout(function(){
                                 loadVideo(refresh_token);
                             }, song_remaining_length);
