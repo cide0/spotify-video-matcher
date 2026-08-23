@@ -36,14 +36,14 @@ If you need more API keys just repeat this step and add them to the `.env` file.
    - `make install`
    - `make up`
 
-5. Open your browser and go to `http://127.0.0.1:8080` (or the port you specified in `.env`).
+5. Open your browser and go to [Localhost on port 8080](http://127.0.0.1:8080) (or the port you specified in `.env`).
 
 ## Make Targets
 
 There are different make targets available to install and run this project:
 - `make build-dev` - Build the Docker image.
 - `make install` - Run `make npm-install` and `make build-dev`.
-- `make npm-install` - Install npm dependencies.
+- `make npm-install` - Install `npm` dependencies.
 - `make up` - Start the container.
 - `make down` - Stop the container.
 - `make cleanup` - Cleanup all containers, images and volumes.
