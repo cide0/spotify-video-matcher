@@ -18,7 +18,7 @@ Using a host with https should resolve this issue, at least it did for me.
 
 ## Setup
 
-1. Create a new app in the Spotify Developer Dashboard: https://developer.spotify.com/dashboard/applications and add a redirect URI for your app (e.g., `http://127.0.0.1:8080/callback`).
+1. Create a new app in the Spotify Developer Dashboard: https://developer.spotify.com/dashboard/applications and add a redirect URI for your app (e.g. `http://127.0.0.1:8080/callback` for local use).
 
 2. Create a new project in the Google Cloud Console: https://console.cloud.google.com/
    - Enable the YouTube Data API v3 for your project
@@ -35,6 +35,8 @@ If you need more API keys just repeat this step and add them to the `.env` file.
 4. Run these make targets in order:
    - `make install`
    - `make up`
+
+5. Open your browser and go to `http://127.0.0.1:8080` (or the port you specified in `.env`).
 
 ## Make Targets
 
